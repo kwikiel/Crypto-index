@@ -1,6 +1,7 @@
 import requests, bs4
 import apikeys
-from bittrex import bittrex
+# from bittrex import bittrex
+from bittrex.bittrex import Bittrex
 import krakenex
 
 # Will use across Kraken, Bittrex, Poloniex
@@ -20,7 +21,7 @@ kraken_secret = apikeys.kraken_secret
 kraken_api = krakenex.API()
 kraken_api.load_key('kraken.key') #This needs to be changed
 poloniex_api = poloniex.Poloniex(key=poloniex_key, secret=poloniex_secret)
-bittrex_api = bittrex(bittrex_key, bittrex_secret)
+bittrex_api = Bittrex(bittrex_key, bittrex_secret)
 
 # Generate list of top twenty coins
 url = 'https://coinmarketcap.com/all/views/all/'
@@ -92,7 +93,6 @@ def kraken_orders(amount,currency): # BTC needs to be changed to XBT, Amount = a
                  'ordertype': 'market',
                  'volume': amount})
 
-
 # Function to make Poloniex orders (https://poloniex.com/support/api/)
 poloniex_individual_amount = poloniex_amount/len(poloniex_invest)
 
@@ -107,7 +107,15 @@ bittrex_individual_amount = bittrex_amount/len(bittrex_invest)
 def bittrex_orders(amount,currency):
     bittrex_api.buymarket(currency, amount) # Fix currency and amount
 
+# Buying Kraken coins
+for coin in kraken_coins:
+    kraken_orders(kraken_amount,coin)
 
+# Buying Poloniex coins
+for coin in poloniex_coins:
+    poloniex_orders(poloniex_amount,coin)
 
-
+# Buying Bittrex coins
+for coin in kraken_coins:
+    bittrex_orders(bittrex_amount,coin)
 
