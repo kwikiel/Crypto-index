@@ -1,0 +1,7 @@
+*.pyc
+*~
+__pycache__
+index
+apikeys2.py
+notes.txt
+kraken.key
