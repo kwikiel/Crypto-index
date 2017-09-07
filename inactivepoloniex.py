@@ -4,6 +4,8 @@ from bittrex.bittrex import Bittrex
 import krakenex
 import marketDictionaries
 
+real_money=False
+
 # Will use across Kraken, Bittrex
 kraken_dict = marketDictionaries.kraken
 bittrex_dict = marketDictionaries.bittrex
