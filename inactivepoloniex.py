@@ -28,11 +28,11 @@ def transfer_from_kraken(asset, amount, address):
     'key':address, # 'bittrex'
     'amount':amount}) # str(bittrex_amount) Including fees
 
-def get_kraken_txid(asset): # BTC needs to be changed to XBT, Amount = amount in btc
+def get_kraken_txid(asset): # Get transaction id of most recent kraken withdrawal
     result = kraken_api.query_private('WithdrawStatus',{'asset':asset})['result'][0]
     return result['txid'], result['refid']
 
-# Function to check if withdrawal has arrived at bittrex
+# Function to check if withdrawal has arrived at bittrex (Needs to be tested)
 def check_bittrex_arrival(old_number_of_bittrex_deposits, ref_id_from_transaction):
     time.sleep(300)
     kraken_txid = kraken_api.query_private('WithdrawStatus',{'asset':'XBT'})['result'][0]['txid']
@@ -56,6 +56,7 @@ def base_amount(amount_in_xbt,ask_price):
     result = '%.8f'%(float(amount_in_xbt)/float(ask_price))
     return result
 
+# Function to buy coins on kraken
 def kraken_orders(amount_in_xbt,currency_to_buy): # BTC needs to be changed to XBT, Amount = amount in btc
     pair = kraken_dict[currency_to_buy]
     ask_price = kraken_ticker(pair)
@@ -72,13 +73,7 @@ def bittrex_orders(amount,currency):
     rate = bittrex_api.get_ticker(bittrex_dict[currency])['result']['Ask'] # Should be using the 'ask' field (https://tonyy.in/guide-to-buying-antshares-neo-ans-on-bittrex-exchange/)
     return bittrex_api.buy_limit(bittrex_dict[currency], amount, rate)
 
-# Need to wait for coins to be transferred before ordering
-def kraken_orders_test(amount_in_xbt,currency_to_buy): # BTC needs to be changed to XBT, Amount = amount in btc
-    pair = kraken_dict[currency_to_buy]
-    ask_price = kraken_ticker(pair)
-    amount = float(base_amount(amount_in_xbt,ask_price))
-    return 'We are now buying ' + str(amount) + ' of ' + currency_to_buy, pair, amount
-
+# Get Bittrex Deposit history
 def bittrex_deposit_history():
     return bittrex_api.get_deposit_history()['result'] #[0]['TxId'] # Returns Txid of transaction
 
