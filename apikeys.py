@@ -1,0 +1,5 @@
+Bittrex_secret_key_TwoFA = ''
+bittrex_key = ''
+bittrex_secret = ''
+kraken_key = ''
+kraken_secret = ''
