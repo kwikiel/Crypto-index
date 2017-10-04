@@ -30,23 +30,23 @@ The script can then be run with
 
 Minimum volume on trades:
 -------------------------
-*Augur (REP): 0.3
-*Bitcoin (XBT): 0.002
-*Bitcoin Cash (BCH): 0.002
-*Dash (DASH): 0.03
-*Dogecoin (DOGE): 3000
-*EOS (EOS): 3
-*Ethereum (ETH): 0.02
-*Ethereum Classic (ETC): 0.3
-*Gnosis (GNO): 0.03
-*Iconomi (ICN): 2
-*Litecoin (LTC): 0.1
-*Melon (MLN): 0.1
-*Monero (XMR): 0.1
-*Ripple (XRP): 30
-*Stellar Lumens (XLM): 300
-*Zcash (ZEC): 0.03
-*Tether (USDT): 5
+* Augur (REP): 0.3
+* Bitcoin (XBT): 0.002
+* Bitcoin Cash (BCH): 0.002
+* Dash (DASH): 0.03
+* Dogecoin (DOGE): 3000
+* EOS (EOS): 3
+* Ethereum (ETH): 0.02
+* Ethereum Classic (ETC): 0.3
+* Gnosis (GNO): 0.03
+* Iconomi (ICN): 2
+* Litecoin (LTC): 0.1
+* Melon (MLN): 0.1
+* Monero (XMR): 0.1
+* Ripple (XRP): 30
+* Stellar Lumens (XLM): 300
+* Zcash (ZEC): 0.03
+* Tether (USDT): 5
 
 
 Disclaimer
