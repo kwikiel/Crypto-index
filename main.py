@@ -6,7 +6,7 @@ import marketDictionaries
 
 real_money=False
 
-# Will use across Kraken, Bittrex
+# Dictionaries relating coin pairs on Kraken and Bittrex
 kraken_dict = marketDictionaries.kraken
 bittrex_dict = marketDictionaries.bittrex
 all_kraken_coins = list(kraken_dict.keys())
@@ -18,23 +18,25 @@ bittrex_secret = apikeys.bittrex_secret
 kraken_key = apikeys.kraken_key
 kraken_secret = apikeys.kraken_secret
 
-# APIs
+# Connecting to APIs
 kraken_api = krakenex.API()
 kraken_api.load_key('kraken.key')
 bittrex_api = Bittrex(bittrex_key, bittrex_secret)
 
-# # Function to transfer from kraken (https://www.kraken.com/help/api#private-user-data)
+#  Function to transfer funds from kraken (https://www.kraken.com/help/api#private-user-data)
 def transfer_from_kraken(asset, amount, address):
     return kraken_api.query_private('Withdraw',
-    {'asset':asset, # 'XBT'
-    'key':address, # 'bittrex'
-    'amount':amount}) # str(bittrex_amount) Including fees
+    {'asset':asset, # e.g 'XBT'
+    'key':address, # e.g. 'bittrex'
+    'amount':amount}) # string (including fees)
 
 def get_kraken_txid(asset): # Get transaction id of most recent kraken withdrawal
     result = kraken_api.query_private('WithdrawStatus',{'asset':asset})['result'][0]
-    return result['txid'], result['refid']
+    txid = result['txid'] 
+    refid = result['refid']
+    return txid, refid
 
-# Function to check if withdrawal has arrived at bittrex (Needs to be tested)
+# Function to check if withdrawal has arrived at bittrex
 def check_bittrex_arrival(old_number_of_bittrex_deposits, ref_id_from_transaction):
     time.sleep(300)
     kraken_txid = kraken_api.query_private('WithdrawStatus',{'asset':'XBT'})['result'][0]['txid']
@@ -79,9 +81,8 @@ def bittrex_orders(amount,currency):
 def bittrex_deposit_history():
     return bittrex_api.get_deposit_history()['result'] #[0]['TxId'] # Returns Txid of transaction
 
-
-if __name__ == "__main__":
-    # Generate list of top twenty coins
+# Generate list of top twenty coins
+def coinmarketcap():
     url = 'https://coinmarketcap.com/all/views/all/'
     print('Downloading page %s...' % url)
     res = requests.get(url)
@@ -89,13 +90,16 @@ if __name__ == "__main__":
     elements = bs4.BeautifulSoup(res.text,'html.parser')
     name = elements.select('td.no-wrap.currency-name a')
     symbol = elements.select('td.text-left')
-    top_twenty = {symbol[i].getText():name[i].getText() for i in range(20)}
-    top_twenty_codes = list(top_twenty.keys())
+    top_twenty = {symbol[i].getText():name[i].getText() for i in range(20)} 
+    return top_twenty
 
-    # List of which coin is in which exchange
+# List of which coin is in which exchange
+def coin_exchange_list():
+    top_twenty = coinmarketcap()
+    top_twenty_codes = list(top_twenty.keys())  
     kraken_coins = []
     bittrex_coins = []
-    for code in top_twenty_codes:
+    for code in top_twenty_codes: 
         if code != 'BTC':
             if code in all_kraken_coins:
                 kraken_coins.append(code)
@@ -103,20 +107,18 @@ if __name__ == "__main__":
                 bittrex_coins.append(code)
             else:
                 print(top_twenty[code] + ' is not in any exchange')
-
-    # Ignore IOTA, Tether, USDT
-
-    # Print how many coins go to each exchange
-    total_coin_number = len(kraken_coins) + len(bittrex_coins) + 1 # + len(extras) = 20 hopefully. The +1 is for bitcoin, which is the left over
-    print ('We will be investing in ' + str(total_coin_number) + ' coins today. ' + str(len(kraken_coins) + 1) + ' of these coins are on Kraken and ' + str(len(bittrex_coins)) + ' will be on Bittrex.' )
-    
+    total_coin_number = len(kraken_coins) + len(bittrex_coins) + 1 # + len(extras) = 20
+    print ('We will be investing in ' + str(total_coin_number) + ' coins today. ' + str(len(kraken_coins) + 1) + ' of these coins are on Kraken and ' + str(len(bittrex_coins)) + ' will be on Bittrex.' )    
     print('The coins on Kraken are: \n' )
     for coin in kraken_coins:
         print(coin)
-
     print('The coins on Bittrex are: \n' )
     for coin in bittrex_coins:
         print(coin)
+    return kraken_coins, bittrex_coins, total_coin_number
+
+if __name__ == "__main__":
+    kraken_coins, bittrex_coins, total_coin_number = coin_exchange_list()
 
     # Calculate percent of total investment to tranfer to each exchange
     kraken_percent = (len(kraken_coins) + 1)/total_coin_number 
@@ -150,7 +152,6 @@ if __name__ == "__main__":
                 kraken_orders(kraken_individual_amount,coin)
             except:
                 continue
-
 
     # Buying Bittrex coins
     if real_money == True:
